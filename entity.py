@@ -1,19 +1,20 @@
 class IMSenderEntity:
-    def __init__(self, token, title, text, reminders = [], is_at_all = False):
+    def __init__(self, token, title, text, reminders, is_at_all):
         self.token = token
         self.title = title
         self.text = text
         self.reminders = reminders
         self.is_at_all = is_at_all
-    
+
     def __str__(self):
         text = 'token: %s \n' % (self.token)
         text += 'reminders: %s \n' % (self.reminders)
-        text += 'is_at_all: %s \n' % (self.is_at_all) 
+        text += 'is_at_all: %s \n' % (self.is_at_all)
         text += 'title: %s \n' % (self.title)
         text += 'text: %s \n' % (self.text)
 
         return text
+
 
 class CommentIssueEntity:
     def __init__(self, owner, repo, issue_number, body):
@@ -22,6 +23,7 @@ class CommentIssueEntity:
         self.issue_number = issue_number
         self.body = body
 
+
 class ApprovePullRequestEntity:
     def __init__(self, owner, repo, pr_number, review_id, body):
         self.owner = owner
@@ -29,7 +31,8 @@ class ApprovePullRequestEntity:
         self.pr_number = pr_number
         self.review_id = review_id
         self.body = body
-        
+
+
 class ClosePullRequestEntity:
     def __init__(self, owner, repo, pr_number, title, body):
         self.owner = owner
