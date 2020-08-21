@@ -60,7 +60,82 @@ def receiver():
     content = requests.request("POST", url, data=json.dumps(data), headers=headers).content
     print(content)
     return content
+def make_issue_comment(issue_number,body):
+    
+    url = 'https://api.github.com/repos/%s/%s/issues/%d/comments' % (REPO_OWNER, REPO_NAME,issue_number)
+    
+    # Headers
+    headers = {
+        "Authorization": "token %s" % TOKEN,
+        "Accept": "application/vnd.github.golden-comet-preview+json"
+    }
+    
+    # Create our issue
+    comment = {'body': body
+             }
+    # Add the issue to our repository
+    session = requests.Session()
+    session.auth = (USERNAME, PASSWORD)
+    r = session.post(url, json.dumps(comment))
+    return r.content
 
+    
+def pull_request_approve(pull_number,commit_title):
+    
+    url = 'https://api.github.com/repos/%s/%s/pulls/%d/merge' % (REPO_OWNER, REPO_NAME,pull_number)
+    
+    # Headers
+    headers = {
+        "Authorization": "token %s" % TOKEN,
+        "Accept": "application/vnd.github.golden-comet-preview+json"
+    }
+    
+    # Create our issue
+    data = {'commit': {
+                      'commit_title': commit_title}}
+
+    payload = json.dumps(data)
+
+    # Add the issue to our repository
+    response = requests.request("PUT", url, data=payload, headers=headers)
+    return response.content
+def close_pull_requests(pull_number,title,body):
+    url = 'https://api.github.com/repos/%s/%s/pulls/%d' % (REPO_OWNER, REPO_NAME,pull_number)
+    
+    # Headers
+    headers = {
+        "Authorization": "token %s" % TOKEN,
+        "Accept": "application/vnd.github.golden-comet-preview+json"
+    }
+    
+    # Create our issue
+    data = {
+                'title':title,
+                'body' :body,
+                'state':'closed',
+                }
+    session = requests.Session()
+    session.auth = (USERNAME, PASSWORD)
+    r = session.post(url, json.dumps(data))
+    return r.content
+
+def send_msg(url, reminders, text,title,link):
+    headers = {'Content-Type': 'application/json;charset=utf-8'}
+    data = {
+    "msgtype": "link", # 发送消息类型为文本
+    "at": {
+    "atMobiles": reminders,
+    "isAtAll": False, # 不@所有人
+    },
+    "link": {
+        "text": text,
+        "title":title,
+        "picUrl": "", 
+        "messageUrl": link
+        }
+    }
+    r = requests.post(url, data=json.dumps(data), headers=headers)
+    return r.text
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App
     # Engine, a webserver process such as Gunicorn will serve the app. This
