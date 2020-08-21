@@ -14,6 +14,21 @@ class IMSenderEntity:
         text += 'text: %s \n' % (self.text)
 
         return text
+    def execute(self):
+        headers = {'Content-Type': 'application/json;charset=utf-8'}
+        data = {
+        "msgtype": "markdown",
+        "markdown": {
+        "title":self.title,
+        "text":self.text
+        },
+        "at": {
+          "atMobiles": [self.reminders],
+          "isAtAll": is_at_all
+          }
+        }
+        r = requests.post(token, data=json.dumps(data), headers=headers)
+        return r.text
 
 
 class CommentIssueEntity:
@@ -22,16 +37,51 @@ class CommentIssueEntity:
         self.repo = repo
         self.issue_number = issue_number
         self.body = body
+    def execute(self):
+        url = 'https://api.github.com/repos/%s/%s/issues/%d/comments' % (self.owner, self.repo,self.issue_number)
+        headers = {
+        "Authorization": "token %s" % TOKEN,
+        "Accept": "application/vnd.github.golden-comet-preview+json"
+        }
+        comment = {'body': self.body
+             }
+        payload = json.dumps(comment)
+        r = requests.request("POST", url, data=payload, headers=headers)
+        return r.content
 
 
 class ApprovePullRequestEntity:
-    def __init__(self, owner, repo, pr_number, review_id, body):
+    def __init__(self, owner, repo, pr_number, body):
         self.owner = owner
         self.repo = repo
         self.pr_number = pr_number
-        self.review_id = review_id
         self.body = body
+    def execute(self):
+        url = 'https://api.github.com/repos/%s/%s/pulls/%d/reviews' % (self.owner, self.repo,self.pull_number)
+        headers = {
+            "Authorization": "token %s" % TOKEN,
+            "Accept": "application/vnd.github.golden-comet-preview+json"
+        }
+        commit= {        
+        }
+        payload = json.dumps(commit)
+        r = requests.request("POST", url, data=payload, headers=headers)
+        res_dict=r.json()
+        self.review_id=res_dict['id']
 
+        url = 'https://api.github.com/repos/%s/%s/pulls/%d/reviews/%d/events' % (self.owner, self.repo,self.pull_number,self.review_id)
+        headers = {
+            "Authorization": "token %s" % TOKEN,
+            "Accept": "application/vnd.github.golden-comet-preview+json"
+        }
+        commit= {
+                'event':'APPROVE'      
+        }
+        payload = json.dumps(commit)
+        r = requests.request("POST", url, data=payload, headers=headers)
+        return r.content
+        
+    
 
 class ClosePullRequestEntity:
     def __init__(self, owner, repo, pr_number, title, body):
@@ -40,3 +90,17 @@ class ClosePullRequestEntity:
         self.pr_number = pr_number
         self.title = title
         self.body = body
+    def execute(self):
+        url = 'https://api.github.com/repos/%s/%s/pulls/%d' % (self.owner, self.name,pull_number)
+        headers = {
+            "Authorization": "token %s" % TOKEN,
+            "Accept": "application/vnd.github.golden-comet-preview+json"
+        }  
+        data = {
+                'title':self.title,
+                'body' :self.body,
+                'state':'closed',
+                }
+        payload = json.dumps(data)
+        r = requests.request("POST", url, data=payload, headers=headers)
+        return r.content    
