@@ -1,4 +1,5 @@
 from entity import *
+from Sender import *
 
 def execute_issue_receive(repo, issue):
     title = 'GitHub: Issue Created'
@@ -20,19 +21,23 @@ def execute_issue_receive(repo, issue):
         token = config['token']
         im_request = IMSenderEntity(token, title, text, config['remiders'], config['is_at_all'])
         print(im_request)
-        #send_msg(im_request)
+        send_dingding_msg(im_request)
+
 
 def execute_comment_issue(body):
     # straightforward call sender?
     print(body)
 
+
 def execute_approve_issue(body):
     # straightforward call sender?
     print(body)
 
+
 def execute_close_pullrequest(body):
     # straightforward call sender?
     print(body)
+
 
 def execute_receive_configuration(configuration):
     # call config function

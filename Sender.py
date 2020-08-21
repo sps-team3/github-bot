@@ -5,6 +5,7 @@ importlib.reload(sys)
 import os
 import requests
 import json
+
 def make_issue_comment(REPO_OWNER, REPO_NAME,Tissue_number,body):
     
     url = 'https://api.github.com/repos/%s/%s/issues/%d/comments' % (REPO_OWNER, REPO_NAME,issue_number)
@@ -83,18 +84,19 @@ def close_pull_requests(REPO_OWNER, REPO_NAME,pull_number,title,body):
     r = requests.request("POST", url, data=payload, headers=headers)
     return r.content
 
-def send_dingding_msg(url, reminders,title,text):
+def send_dingding_msg(im_request):
+    url = 'https://oapi.dingtalk.com/robot/send?access_token=%s' % (im_request.token)
     headers = {'Content-Type': 'application/json;charset=utf-8'}
     data = {
-    "msgtype": "markdown",
-    "markdown": {
-         "title":title,
-         "text":text
-    },
-    "at": {
-          "atMobiles": [reminders],
-          "isAtAll": False
-      }
+        "msgtype": "markdown",
+        "markdown": {
+            "title": im_request.title,
+            "text": im_request.text
+        },
+        "at": {
+            "atMobiles": im_request.reminders,
+            "isAtAll": im_request.is_at_all
+        }
     }
     r = requests.post(url, data=json.dumps(data), headers=headers)
     return r.text

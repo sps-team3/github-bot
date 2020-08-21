@@ -14,21 +14,6 @@ class IMSenderEntity:
         text += 'text: %s \n' % (self.text)
 
         return text
-    def execute(self):
-        headers = {'Content-Type': 'application/json;charset=utf-8'}
-        data = {
-        "msgtype": "markdown",
-        "markdown": {
-        "title":self.title,
-        "text":self.text
-        },
-        "at": {
-          "atMobiles": [self.reminders],
-          "isAtAll": is_at_all
-          }
-        }
-        r = requests.post(token, data=json.dumps(data), headers=headers)
-        return r.text
 
 
 class CommentIssueEntity:
