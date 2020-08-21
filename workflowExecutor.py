@@ -8,7 +8,7 @@ def execute_issue_receive(repo, issue):
     text += '%s\n\n' % (issue['title'])
     text += '%s\n\n' % (issue['body'])
 
-    # get related configs
+    # get related configs by repo full_name
 
     configs = [{
         'token': 'moke_token',
@@ -20,3 +20,15 @@ def execute_issue_receive(repo, issue):
         im_request = IMSenderEntity(config['token'], title, text, config['remiders'], config['is_at_all'])
         print(im_request)
         #send_msg(im_request)
+
+def execute_comment_issue(body):
+    # straightforward call sender?
+
+def execute_approve_issue(body):
+    # straightforward call sender?
+
+def execute_close_pullrequest(body):
+    # straightforward call sender?
+
+def execute_receive_configuration(configuration):
+    # call config function
