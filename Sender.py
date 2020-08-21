@@ -25,10 +25,9 @@ def make_issue_comment(REPO_OWNER, REPO_NAME,TOKEN,issue_number,body):
     r = requests.request("POST", url, data=payload, headers=headers)
     return r.content
 
+def approve_pull_request(REPO_OWNER, REPO_NAME,TOKEN,pull_number):
     
-def pull_request_approve(REPO_OWNER, REPO_NAME,TOKEN,pull_number,commit_title):
-    
-    url = 'https://api.github.com/repos/%s/%s/pulls/%d/merge' % (REPO_OWNER, REPO_NAME,pull_number)
+    url = 'https://api.github.com/repos/%s/%s/pulls/%d/reviews' % (REPO_OWNER, REPO_NAME,pull_number)
     
     # Headers
     headers = {
@@ -37,10 +36,30 @@ def pull_request_approve(REPO_OWNER, REPO_NAME,TOKEN,pull_number,commit_title):
     }
     
     commit= {
-                'commit_title': commit_title}
-    session = requests.Session()
-    session.auth = (USERNAME, PASSWORD)
-    r = session.post(url, json.dumps(commit))
+                
+        }
+    payload = json.dumps(commit)
+
+   
+    r = requests.request("POST", url, data=payload, headers=headers)
+    return r.content
+    
+def submit_pull_request(REPO_OWNER, REPO_NAME,TOKEN,pull_number,review_id):
+    
+    url = 'https://api.github.com/repos/%s/%s/pulls/%d/reviews/%d/events' % (REPO_OWNER, REPO_NAME,pull_number,review_id)
+    
+    # Headers
+    headers = {
+        "Authorization": "token %s" % TOKEN,
+        "Accept": "application/vnd.github.golden-comet-preview+json"
+    }
+    
+    commit= {
+                'event':'APPROVE'
+                
+        }
+    payload = json.dumps(commit)
+    r = requests.request("POST", url, data=payload, headers=headers)
     return r.content
     
 def close_pull_requests(REPO_OWNER, REPO_NAME,TOKEN,pull_number,title,body):
@@ -64,20 +83,18 @@ def close_pull_requests(REPO_OWNER, REPO_NAME,TOKEN,pull_number,title,body):
     r = requests.request("POST", url, data=payload, headers=headers)
     return r.content
 
-def send_msg(url, reminders, text,title,link):
+def send_dingding_msg(url, reminders,title,text):
     headers = {'Content-Type': 'application/json;charset=utf-8'}
     data = {
-    "msgtype": "link", # 发送消息类型为文本
-    "at": {
-    "atMobiles": reminders,
-    "isAtAll": False, # 不@所有人
+    "msgtype": "markdown",
+    "markdown": {
+         "title":title,
+         "text":text
     },
-    "link": {
-        "text": text,
-        "title":title,
-        "picUrl": "", 
-        "messageUrl": link
-        }
+    "at": {
+          "atMobiles": [reminders],
+          "isAtAll": False
+      }
     }
     r = requests.post(url, data=json.dumps(data), headers=headers)
     return r.text
