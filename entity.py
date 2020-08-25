@@ -22,17 +22,6 @@ class CommentIssueEntity:
         self.repo = repo
         self.issue_number = issue_number
         self.body = body
-    def execute(self):
-        url = 'https://api.github.com/repos/%s/%s/issues/%d/comments' % (self.owner, self.repo,self.issue_number)
-        headers = {
-        "Authorization": "token %s" % TOKEN,
-        "Accept": "application/vnd.github.golden-comet-preview+json"
-        }
-        comment = {'body': self.body
-             }
-        payload = json.dumps(comment)
-        r = requests.request("POST", url, data=payload, headers=headers)
-        return r.content
 
 
 class ApprovePullRequestEntity:
@@ -65,7 +54,6 @@ class ApprovePullRequestEntity:
         payload = json.dumps(commit)
         r = requests.request("POST", url, data=payload, headers=headers)
         return r.content
-        
     
 
 class ClosePullRequestEntity:

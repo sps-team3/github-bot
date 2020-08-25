@@ -1,19 +1,18 @@
-from entity import *
-from Sender import *
+from entity import IMSenderEntity
+from sender import send_dingding_msg
 
 configs = [{
-    'token': 'moke_token',
+    'token': 'mock_token',
     'remiders': [],
     'is_at_all': False,
     }]
 
 def execute_issue_open(json):
-    repo = json["repository"]
-    issue = json["issue"]
+    repo = json['repository']
+    issue = json['issue']
 
     title = 'GitHub: Issue Created'
     text = ''
-
     text += '[[%s]](%s)\n\n' % (repo['name'], repo['html_url'])
     text += '[Issue](%s) created by [%s](%s) \n\n' % \
         (issue['html_url'], issue['user']['login'], issue['user']['html_url'])
@@ -26,40 +25,35 @@ def execute_issue_open(json):
         token = config['token']
         im_request = IMSenderEntity(token, title, text, config['remiders'], config['is_at_all'])
         print(im_request)
-        return send_dingding_msg(im_request)
+        send_dingding_msg(im_request)
+
 
 def execute_issue_comment(json):
-    repo = json["repository"]
-    issue = json["issue"]
-    comment = json["comment"]
+    repo = json['repository']
+    issue = json['issue']
+    comment = json['comment']
 
     title = 'GitHub: Issue Commented'
     text = ''
-
     text += '[[%s]](%s)\n\n' % (repo['name'], repo['html_url'])
     text += '[Issue](%s) has a new [comment](%s) by [%s](%s) \n\n' % \
         (issue['html_url'], comment['html_url'],
-                issue['user']['login'], issue['user']['html_url'])
+         issue['user']['login'], issue['user']['html_url'])
     text += '%s\n\n' % (comment['body'])
-   
+
     for config in configs:
         token = config['token']
         im_request = IMSenderEntity(token, title, text, config['remiders'], config['is_at_all'])
         print(im_request)
-        return send_dingding_msg(im_request)
+        send_dingding_msg(im_request)
 
-
-def execute_approve_issue(body):
-    # straightforward call sender?
-    print(body)
 
 def execute_pull_request_open(json):
-    repo = json["repository"]
-    pull_request = json["pull_request"]
+    repo = json['repository']
+    pull_request = json['pull_request']
 
     title = 'GitHub: Pull Request Created'
     text = ''
-
     text += '[[%s]](%s)\n\n' % (repo['name'], repo['html_url'])
     text += 'new [pull request](%s) created by [%s](%s) \n\n' % \
         (pull_request['html_url'], pull_request['user']['login'], pull_request['user']['html_url'])
@@ -70,31 +64,36 @@ def execute_pull_request_open(json):
         token = config['token']
         im_request = IMSenderEntity(token, title, text, config['remiders'], config['is_at_all'])
         print(im_request)
-        return send_dingding_msg(im_request)
+        send_dingding_msg(im_request)
+
 
 def execute_pull_request_close(json):
-    repo = json["repository"]
-    pull_request = json["pull_request"]
-    merged = pull_request["merged"]
-    merged_by = pull_request["merged_by"]
+    repo = json['repository']
+    pull_request = json['pull_request']
+    merged = pull_request['merged']
+    merged_by = pull_request['merged_by']
 
     # check if merge
     if merged:
         title = 'GitHub: Pull Request Merged'
         text = ''
-    
         text += '[[%s]](%s)\n\n' % (repo['name'], repo['html_url'])
         text += '[pull request](%s) was merged by [%s](%s) \n\n' % \
             (pull_request['html_url'], merged_by['login'], merged_by['html_url'])
         text += '%s\n\n' % (pull_request['title'])
         text += '%s\n\n' % (pull_request['body'])
 
-        config = configs[0]
-        im_request = IMSenderEntity(config["token"], title, text, config['remiders'], config['is_at_all'])
-        print(im_request)
-        return send_dingding_msg(im_request)
-    else:
-        return "error"
+        for config in configs:
+            im_request = IMSenderEntity(config['token'], title, text,
+                                        config['remiders'], config['is_at_all'])
+            print(im_request)
+            send_dingding_msg(im_request)
+
+
+def execute_approve_issue(body):
+    # straightforward call sender?
+    print(body)
+
 
 def execute_receive_configuration(configuration):
     # call config function

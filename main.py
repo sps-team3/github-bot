@@ -1,8 +1,7 @@
 import datetime
-import json
-import requests
 from flask import Flask, render_template, request, redirect
-from workflowExecutor import *
+from workflow_executor import execute_issue_open, execute_issue_comment, execute_pull_request_open
+from workflow_executor import execute_pull_request_close
 
 app = Flask(__name__)
 
@@ -18,30 +17,30 @@ def root():
                    datetime.datetime(2018, 1, 3, 11, 0, 0),
                    ]
 
-    return render_template('index.html', 
-            times=dummy_times)
+    return render_template('index.html', times=dummy_times)
 
 @app.route('/webhook/bot', methods=['GET', 'POST'])
 def receiver():
     print(request.headers)
  #   print(request.json)
 
-    event = request.headers["X-GitHub-Event"]
-    action = request.json["action"]
+    event = request.headers['X-GitHub-Event']
+    action = request.json['action']
     print(event)
     event_map = {
-            "issues": {
-                "opened": execute_issue_open,
-                },
-            "issue_comment": {
-                "created": execute_issue_comment,
-                },
-            "pull_request": {
-                "opened": execute_pull_request_open,
-                "closed": execute_pull_request_close
-                },
-            }
-    return event_map[event][action](request.json)
+        'issues': {
+            'opened': execute_issue_open,
+            },
+        'issue_comment': {
+            'created': execute_issue_comment,
+            },
+        'pull_request': {
+            'opened': execute_pull_request_open,
+            'closed': execute_pull_request_close
+            },
+        }
+    event_map[event][action](request.json)
+    return ''
 
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App
