@@ -1,9 +1,9 @@
 curl 'localhost:8080/webhook/bot' \
 -H 'Content-Type: application/json' \
--H 'X-GitHub-Event: issues' \
+-H 'X-GitHub-Event: issue_comment' \
 -d '{
-  "action": "opened",
-  "issue": {
+    "action": "created",
+    "issue": {
     "url": "https://api.github.com/repos/hzw649/my-portfolio/issues/10",
     "repository_url": "https://api.github.com/repos/hzw649/my-portfolio",
     "labels_url": "https://api.github.com/repos/hzw649/my-portfolio/issues/10/labels{/name}",
@@ -13,7 +13,52 @@ curl 'localhost:8080/webhook/bot' \
     "id": 679715177,
     "node_id": "MDU6SXNzdWU2Nzk3MTUxNzc=",
     "number": 10,
-    "title": "titleeeeee",
+    "title": "sssss",
+    "user": {
+    "login": "hzw649",
+    "id": 34160151,
+    "node_id": "MDQ6VXNlcjM0MTYwMTUx",
+    "avatar_url": "https://avatars1.githubusercontent.com/u/34160151?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/hzw649",
+    "html_url": "https://github.com/hzw649",
+    "followers_url": "https://api.github.com/users/hzw649/followers",
+    "following_url": "https://api.github.com/users/hzw649/following{/other_user}",
+    "gists_url": "https://api.github.com/users/hzw649/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/hzw649/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/hzw649/subscriptions",
+    "organizations_url": "https://api.github.com/users/hzw649/orgs",
+    "repos_url": "https://api.github.com/users/hzw649/repos",
+    "events_url": "https://api.github.com/users/hzw649/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/hzw649/received_events",
+    "type": "User",
+    "site_admin": false
+},
+"labels": [
+
+],
+"state": "open",
+"locked": false,
+"assignee": null,
+"assignees": [
+
+],
+"milestone": null,
+"comments": 1,
+"created_at": "2020-08-16T08:34:29Z",
+"updated_at": "2020-08-25T07:18:00Z",
+"closed_at": null,
+"author_association": "OWNER",
+"active_lock_reason": null,
+"body": "sssss",
+"performed_via_github_app": null
+},
+  "comment": {
+    "url": "https://api.github.com/repos/hzw649/my-portfolio/issues/comments/679850193",
+    "html_url": "https://github.com/hzw649/my-portfolio/issues/10#issuecomment-679850193",
+    "issue_url": "https://api.github.com/repos/hzw649/my-portfolio/issues/10",
+    "id": 679850193,
+    "node_id": "MDEyOklzc3VlQ29tbWVudDY3OTg1MDE5Mw==",
     "user": {
       "login": "hzw649",
       "id": 34160151,
@@ -34,23 +79,10 @@ curl 'localhost:8080/webhook/bot' \
       "type": "User",
       "site_admin": false
     },
-    "labels": [
-
-    ],
-    "state": "open",
-    "locked": false,
-    "assignee": null,
-    "assignees": [
-
-    ],
-    "milestone": null,
-    "comments": 0,
-    "created_at": "2020-08-16T08:34:29Z",
-    "updated_at": "2020-08-16T08:34:29Z",
-    "closed_at": null,
+    "created_at": "2020-08-25T07:18:00Z",
+    "updated_at": "2020-08-25T07:18:00Z",
     "author_association": "OWNER",
-    "active_lock_reason": null,
-    "body": "abbbbbbdddeff",
+    "body": "comment issue",
     "performed_via_github_app": null
   },
   "repository": {

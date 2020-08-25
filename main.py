@@ -26,41 +26,22 @@ def receiver():
     print(request.headers)
  #   print(request.json)
 
-    repo = request.json["repository"]
-    issue = request.json["issue"]
-
-    title = "GitHub: Issue created"
-
-    text = ""
-    text += '[[' + repo["name"] + ']](' + repo["html_url"] + ')'
-    text += "Issue created by "
-    text += '[' + issue["user"]["login"] + '](' + issue["user"]["html_url"] + ')'
-    text += '\n\n'
-
-    text += '[[issue link]](' + issue["html_url"] + ')'
-    text += '\n\n'
-
-    text += issue["title"] + '\n\n'
-    text += issue["body"] + '\n\n'
-
-    data = {
-            "msgtype": "markdown",
-            "markdown": { 
-                "title": title,
-                "text":  text
-                }
+    event = request.headers["X-GitHub-Event"]
+    action = request.json["action"]
+    print(event)
+    event_map = {
+            "issues": {
+                "opened": execute_issue_open,
+                },
+            "issue_comment": {
+                "created": execute_issue_comment,
+                },
+            "pull_request": {
+                "opened": execute_pull_request_open,
+                "closed": execute_pull_request_close
+                },
             }
-    url = DINGTALK_PREFIX + ACCESS_TOKEN
-    headers = {
-            "Content-Type": "application/json"
-            }
-    print(data)
-    print(url)
-    print(headers)
-
-    content = requests.request("POST", url, data=json.dumps(data), headers=headers).content
-    print(content)
-    return content
+    return event_map[event][action](request.json)
 
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App
