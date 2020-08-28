@@ -107,8 +107,8 @@ def create_repo_webhook(webhook_entity):
         'config': {
         'url': webhook_entity.url,
         #'secret': secret,
-        'content_type': webhook_entity.content_type,
-        'insecure_ssl': webhook_entity.insecure_ssl
+        'content_type': 'json',
+        'insecure_ssl': '0'
         
             }
         }
