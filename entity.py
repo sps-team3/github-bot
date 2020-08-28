@@ -64,7 +64,7 @@ class ClosePullRequestEntity:
         self.title = title
         self.body = body
     def execute(self):
-        url = 'https://api.github.com/repos/%s/%s/pulls/%d' % (self.owner, self.name,pull_number)
+        url = 'https://api.github.com/repos/%s/%s/pulls/%d' % (self.owner, self.name,pul_number)
         headers = {
             "Authorization": "token %s" % TOKEN,
             "Accept": "application/vnd.github.golden-comet-preview+json"
@@ -76,4 +76,12 @@ class ClosePullRequestEntity:
                 }
         payload = json.dumps(data)
         r = requests.request("POST", url, data=payload, headers=headers)
-        return r.content    
+        return r.content
+    
+class CreateWebhookEntity:
+    def __init__(self, owner, repo, url, content_type, insecure_ssl):
+        self.owner = owner
+        self.repo = repo
+        self.url= url
+        self.content_type = content_type
+        self.insecure_ssl = insecure_ssl
