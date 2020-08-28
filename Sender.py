@@ -5,6 +5,7 @@ import requests
 
 importlib.reload(sys)
 
+TOKEN='efed7c3379f795e4954560434f9875e527a151f3'
 
 def make_issue_comment(request_entity):
 
@@ -27,43 +28,37 @@ def make_issue_comment(request_entity):
     r = requests.request('POST', url, data=payload, headers=headers)
     return r.content
 
+def approve_pull_request(approve_entity):
 
-def approve_pull_request(REPO_OWNER, REPO_NAME,pull_number):
-
-    url = 'https://api.github.com/repos/%s/%s/pulls/%d/reviews' % (REPO_OWNER, REPO_NAME,pull_number)
-
-    # Headers
+    url = 'https://api.github.com/repos/%s/%s/pulls/%d/reviews' % (approve_entity.owner, approve_entity.repo, approve_entity.pr_number)
     headers = {
-        'Authorization': 'token %s' % TOKEN,
-        'Accept': 'application/vnd.github.golden-comet-preview+json'
+        "Authorization": "token %s" % TOKEN,
+        "Accept": "application/vnd.github.golden-comet-preview+json"
     }
-
-    commit= {}
-    payload = json.dumps(commit)
-   
-    r = requests.request('POST', url, data=payload, headers=headers)
-    return r.content
+    commit= {        
+    }
+    payload = json.dumps(approve_entity.body)
+    r = requests.request("POST", url, data=payload, headers=headers)
     
-def submit_pull_request(REPO_OWNER, REPO_NAME,pull_number,review_id):
+    res_dict=r.json()
+    review_id=res_dict['id']
 
-    url = 'https://api.github.com/repos/%s/%s/pulls/%d/reviews/%d/events' % (REPO_OWNER, REPO_NAME,pull_number,review_id)
-    
-    # Headers
+    url = 'https://api.github.com/repos/%s/%s/pulls/%d/reviews/%d/events' % (approve_entity.owner, approve_entity.repo, approve_entity.pr_number,review_id)
     headers = {
-        'Authorization': 'token %s' % TOKEN,
-        'Accept': 'application/vnd.github.golden-comet-preview+json'
+        "Authorization": "token %s" % TOKEN,
+        "Accept": "application/vnd.github.golden-comet-preview+json"
     }
-    
     commit= {
-                'event':'APPROVE'
-                
-        }
+         'event':'APPROVE'      
+    }
     payload = json.dumps(commit)
-    r = requests.request('POST', url, data=payload, headers=headers)
-    return r.content
+    r = requests.request("POST", url, data=payload, headers=headers)
     
-def close_pull_requests(REPO_OWNER, REPO_NAME,pull_number,title,body):
-    url = 'https://api.github.com/repos/%s/%s/pulls/%d' % (REPO_OWNER, REPO_NAME,pull_number)
+    #return r.content
+    print (r.content)
+
+def close_pull_requests(close_entity):
+    url = 'https://api.github.com/repos/%s/%s/pulls/%d' % (close_entity.owner, close_entity.repo, close_entity.pr_number)
 
     # Headers
     headers = {
@@ -72,8 +67,8 @@ def close_pull_requests(REPO_OWNER, REPO_NAME,pull_number,title,body):
     }
 
     data = {
-        'title':title,
-        'body' :body,
+        'title':close_entity.title,
+        'body' :close_entity.body,
         'state':'closed',
         }
 
@@ -98,3 +93,4 @@ def send_dingding_msg(im_request):
     }
     r = requests.post(url, data=json.dumps(data), headers=headers)
     return r.text
+
