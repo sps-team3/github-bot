@@ -5,7 +5,6 @@ import requests
 
 importlib.reload(sys)
 
-TOKEN='efed7c3379f795e4954560434f9875e527a151f3'
 
 def make_issue_comment(request_entity):
 
@@ -93,4 +92,30 @@ def send_dingding_msg(im_request):
     }
     r = requests.post(url, data=json.dumps(data), headers=headers)
     return r.text
+def create_repo_webhook(webhook_entity):
+
+    url = 'https://api.github.com/repos/%s/%s/hooks' % (webhook_entity.owner, webhook_entity.repo)
+
+    # Headers
+    headers = {
+        'Authorization': 'token %s' % TOKEN,
+        'Accept': 'application/vnd.github.golden-comet-preview+json'
+    }
+
+    # Create our issue
+    data={
+        'config': {
+        'url': webhook_entity.url,
+        #'secret': secret,
+        'content_type': webhook_entity.content_type,
+        'insecure_ssl': webhook_entity.insecure_ssl
+        
+            }
+        }
+    # Add the issue to our repository
+    payload = json.dumps(data)
+
+    r = requests.request('POST', url, data=payload, headers=headers)
+    return r.content
+
 
