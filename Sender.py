@@ -108,8 +108,8 @@ def create_repo_webhook(webhook_entity):
         'url': webhook_entity.url,
         #'secret': secret,
         'content_type': 'json',
-        'insecure_ssl': '0'
-        
+        'insecure_ssl': '0',
+        'event':'*'
             }
         }
     # Add the issue to our repository
