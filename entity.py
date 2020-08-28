@@ -79,9 +79,7 @@ class ClosePullRequestEntity:
         return r.content
     
 class CreateWebhookEntity:
-    def __init__(self, owner, repo, url, content_type, insecure_ssl):
+    def __init__(self, owner, repo, url):
         self.owner = owner
         self.repo = repo
         self.url= url
-        self.content_type = content_type
-        self.insecure_ssl = insecure_ssl
