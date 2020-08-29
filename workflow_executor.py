@@ -97,6 +97,7 @@ def execute_pull_request_close(json):
             print(im_request)
             send_dingding_msg(im_request)
 
+
 def execute_pr_review_comment(json):
     repo = json['repository']
     pull_request = json['pull_request']
@@ -110,11 +111,14 @@ def execute_pr_review_comment(json):
             (pull_request['html_url'], user['login'], user['html_url'])
     text += '%s\n\n' % (comment['body'])
 
+    configs = config_store.get_configs(repo['name'], repo['owner']['login'])
+
     for config in configs:
         im_request = IMSenderEntity(config['token'], title, text,
                 config['remiders'], config['is_at_all'])
         print(im_request)
         send_dingding_msg(im_request)
+
 
 def check_config_exist(repo, owner, group_id):
     """Check whether the gourp has set config, return true if exist"""

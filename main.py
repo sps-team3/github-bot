@@ -22,7 +22,7 @@ def root():
 @app.route('/webhook/bot', methods=['GET', 'POST'])
 def receiver():
     print(request.headers)
- #   print(request.json)
+    print(request.json)
 
     event = request.headers['X-GitHub-Event']
     action = request.json['action']
@@ -45,6 +45,40 @@ def receiver():
     event_map[event][action](request.json)
     return ''
 
+@app.route('/webhook/im', methods=['GET', 'POST'])
+def im_receiver():
+    print(request.headers)
+    print(request.json)
+
+    data = request.json
+    content = data['text']['content']
+    group_id = data['conversationId']
+
+    print(content)
+    print(group_id)
+
+    # word = content.split(' ')
+    # request_type = word[1]
+    
+    # if request_type == 'approve_pr':
+    #     execute_approve_pull_request(word)
+
+
+    response_content = 'Receive content: ' + content
+
+    data = {
+        'msgtype': 'markdown',
+        'text': {
+            'content': response_content
+        },
+        'at': {
+            'atMobiles': [],
+            'isAtAll': False
+        }
+    }
+    
+    return data
+
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App
     # Engine, a webserver process such as Gunicorn will serve the app. This
@@ -53,4 +87,5 @@ if __name__ == '__main__':
     # the "static" directory. See:
     # http://flask.pocoo.org/docs/1.0/quickstart/#static-files. Once deployed,
     # App Engine itself will serve those files as configured in app.yaml.
+    app.config['JSON_AS_ASCII'] = False
     app.run(host='127.0.0.1', port=8080, debug=True)
