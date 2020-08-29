@@ -7,7 +7,7 @@ class Config:
         self.bot_web_hook = bot_web_hook
         self.repo = repo
         self.owner = owner
-        self.is_at_all = is_at_all
+        self._is_at_all = is_at_all
         self.reminders = reminders
         self.data = data
 
@@ -15,7 +15,7 @@ class Config:
         return self.bot_web_hook
 
     def is_at_all(self) -> bool:
-        return self.is_at_all
+        return self._is_at_all
 
     def get_reminders(self) -> list:
         return self.reminders
@@ -31,15 +31,15 @@ class Config:
 
     def __str__(self):
         config_str = "config:\n"
-        config_str += "\tWebhook = " + self.bot_web_hook + "\n"
-        config_str += "\trepo = " + self.repo + "\n"
-        config_str += "\towner = " + self.owner + "\n"
-        config_str += "\tis_at_all = " + str(self.is_at_all) + "\n"
+        config_str += "\tWebhook = " + self.get_web_hook() + "\n"
+        config_str += "\trepo = " + self.get_repo() + "\n"
+        config_str += "\towner = " + self.get_owner() + "\n"
+        config_str += "\tis_at_all = " + str(self.is_at_all()) + "\n"
         config_str += "\treminders = ["
-        for item in self.reminders:
+        for item in self.get_reminders():
             config_str += item + ", "
         config_str += "]\n"
-        config_str += "\tdata = " + str(self.data) + "\n"
+        config_str += "\tdata = " + str(self.get_data()) + "\n"
         return config_str
 
 
@@ -62,15 +62,15 @@ class ConfigDataBase:
         return configs
 
     def add_config(self, config: Config):
-        self.__delete_entity(config.bot_web_hook, config.repo, config.owner)
+        self.__delete_entity(config.get_web_hook(), config.get_repo(), config.get_owner())
         entity = datastore.Entity(key=self.datastore_client.key('Config'))
         entity.update({
-            'bot_web_hook': config.bot_web_hook,
-            'repo': config.repo,
-            'owner': config.owner,
-            'is_at_all': config.is_at_all,
-            'reminders': config.reminders,
-            'data' : json.dumps(config.data)
+            'bot_web_hook': config.get_web_hook(),
+            'repo': config.get_repo(),
+            'owner': config.get_owner(),
+            'is_at_all': config.is_at_all(),
+            'reminders': config.get_reminders(),
+            'data' : json.dumps(config.get_data())
         })
         self.datastore_client.put(entity)
 
@@ -98,7 +98,7 @@ class ConfigDataBase:
 
 if __name__ == "__main__":
     config_store = ConfigDataBase()
-    config = Config("http://www.test3.com", "tt", "tt", True, ["Alice"], {"group id": "qwertyu", "user id": "poiuy"})
+    config = Config("http://www.test1.com", "tt", "tt", False, ["Alice"], {"group id": "qwertyu", "user id": "poiuy"})
     print(config)
     config_store.add_config(config)
     configs = config_store.get_configs("tt", "tt")
