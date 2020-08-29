@@ -1,9 +1,5 @@
-import sys
-import importlib
 import json
 import requests
-
-importlib.reload(sys)
 
 TOKEN = ''
 

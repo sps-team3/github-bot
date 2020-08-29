@@ -1,7 +1,7 @@
 import datetime
 from flask import Flask, render_template, request, redirect
 from workflow_executor import execute_issue_open, execute_issue_comment, execute_pull_request_open
-from workflow_executor import execute_pull_request_close, execute_pr_review_comment, execute_pr_approve
+from workflow_executor import execute_pull_request_close, execute_pr_review_comment
 
 app = Flask(__name__)
 
@@ -40,9 +40,6 @@ def receiver():
             },
         'pull_request_review_comment': {
             'created': execute_pr_review_comment
-            },
-        'pull_request_review': {
-            'submitted': execute_pr_approve
             },
         }
     event_map[event][action](request.json)

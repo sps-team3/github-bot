@@ -134,7 +134,8 @@ def execute_approve_pull_request(body):
     group_id = body['group_id']
 
     if check_config_exist(repo, owner. group_id):
-        entity = ApprovePullRequestEntity(owner, repo, pr_number, content)
+        data = {}
+        entity = ApprovePullRequestEntity(owner, repo, pr_number, content, data)
         return approve_pull_request(entity)
     
     return 'No config exist'
