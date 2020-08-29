@@ -5,6 +5,7 @@ import requests
 
 importlib.reload(sys)
 
+TOKEN = ''
 
 def make_issue_comment(request_entity):
 
@@ -92,9 +93,11 @@ def send_dingding_msg(im_request):
     }
     r = requests.post(url, data=json.dumps(data), headers=headers)
     return r.text
+
 def create_repo_webhook(webhook_entity):
 
     url = 'https://api.github.com/repos/%s/%s/hooks' % (webhook_entity.owner, webhook_entity.repo)
+    webhook_url = 'summer20-sps-52.appspot.com/webhook/bot' 
 
     # Headers
     headers = {
@@ -105,7 +108,7 @@ def create_repo_webhook(webhook_entity):
     # Create our issue
     data={
         'config': {
-        'url': webhook_entity.url,
+        'url': webhook_url,
         #'secret': secret,
         'content_type': 'json',
         'insecure_ssl': '0',

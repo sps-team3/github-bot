@@ -1,11 +1,8 @@
-from entity import IMSenderEntity
-from sender import send_dingding_msg
+from entity import IMSenderEntity, ApprovePullRequestEntity, CreateWebhookEntity
+from sender import send_dingding_msg, approve_pull_request, create_repo_webhook
+from config import ConfigDataBase, Config
 
-configs = [{
-    'token': 'mock_token',
-    'remiders': [],
-    'is_at_all': False,
-    }]
+config_store = ConfigDataBase()
 
 def execute_issue_open(json):
     repo = json['repository']
@@ -19,11 +16,11 @@ def execute_issue_open(json):
     text += '%s\n\n' % (issue['title'])
     text += '%s\n\n' % (issue['body'])
 
-    # get related configs by repo full_name
+    configs = config_store.get_configs(repo['name'], repo['owner']['login'])
 
     for config in configs:
-        token = config['token']
-        im_request = IMSenderEntity(token, title, text, config['remiders'], config['is_at_all'])
+        token = config.bot_web_hook
+        im_request = IMSenderEntity(token, title, text, config.remiders, config.is_at_all)
         print(im_request)
         send_dingding_msg(im_request)
 
@@ -46,9 +43,11 @@ def execute_issue_comment(json):
          issue['user']['login'], issue['user']['html_url'])
     text += '%s\n\n' % (comment['body'])
 
+    configs = config_store.get_configs(repo['name'], repo['owner']['login'])
+
     for config in configs:
-        token = config['token']
-        im_request = IMSenderEntity(token, title, text, config['remiders'], config['is_at_all'])
+        token = config.bot_web_hook
+        im_request = IMSenderEntity(token, title, text, config.remiders, config.is_at_all)
         print(im_request)
         send_dingding_msg(im_request)
 
@@ -65,9 +64,11 @@ def execute_pull_request_open(json):
     text += '%s\n\n' % (pull_request['title'])
     text += '%s\n\n' % (pull_request['body'])
 
+    configs = config_store.get_configs(repo['name'], repo['owner']['login'])
+
     for config in configs:
-        token = config['token']
-        im_request = IMSenderEntity(token, title, text, config['remiders'], config['is_at_all'])
+        token = config.bot_web_hook
+        im_request = IMSenderEntity(token, title, text, config.remiders, config.is_at_all)
         print(im_request)
         send_dingding_msg(im_request)
 
@@ -88,9 +89,11 @@ def execute_pull_request_close(json):
         text += '%s\n\n' % (pull_request['title'])
         text += '%s\n\n' % (pull_request['body'])
 
+        configs = config_store.get_configs(repo['name'], repo['owner']['login'])
+
         for config in configs:
-            im_request = IMSenderEntity(config['token'], title, text,
-                                        config['remiders'], config['is_at_all'])
+            token = config.bot_web_hook
+            im_request = IMSenderEntity(token, title, text, config.remiders, config.is_at_all)
             print(im_request)
             send_dingding_msg(im_request)
 
@@ -113,11 +116,40 @@ def execute_pr_review_comment(json):
         print(im_request)
         send_dingding_msg(im_request)
 
-def execute_approve_issue(body):
-    # straightforward call sender?
-    print(body)
+def check_config_exist(repo, owner, group_id):
+    """Check whether the gourp has set config, return true if exist"""
+    configs = config_store.get_configs(repo, owner)
+    for config in configs:
+        data = config.data
+        if data['group id'] == group_id:
+            return True
+    return False
+
+
+def execute_approve_pull_request(body):
+    repo = body['repo']
+    owner = body['owner']
+    pr_number = body['pr_number']
+    content = body['content']
+    group_id = body['group_id']
+
+    if check_config_exist(repo, owner. group_id):
+        entity = ApprovePullRequestEntity(owner, repo, pr_number, content)
+        return approve_pull_request(entity)
+    
+    return 'No config exist'
 
 
 def execute_receive_configuration(configuration):
-    # call config function
-    print(configuration)
+    token = configuration['token']
+    repo = configuration['repo']
+    owner = configuration['owner']
+    is_at_all = configuration['at_all']
+    reminders = configuration['reminders']
+
+    webhook = CreateWebhookEntity(owner, repo)
+    response = create_repo_webhook(webhook)
+
+    # if create webhook successfully, save config
+    config = Config(token, repo, owner, is_at_all, reminders)
+    config_store.add_config(config)

@@ -12,7 +12,6 @@ class IMSenderEntity:
         text += 'is_at_all: %s \n' % (self.is_at_all)
         text += 'title: %s \n' % (self.title)
         text += 'text: %s \n' % (self.text)
-
         return text
 
 
@@ -30,30 +29,6 @@ class ApprovePullRequestEntity:
         self.repo = repo
         self.pr_number = pr_number
         self.body = body
-    def execute(self):
-        url = 'https://api.github.com/repos/%s/%s/pulls/%d/reviews' % (self.owner, self.repo,self.pull_number)
-        headers = {
-            "Authorization": "token %s" % TOKEN,
-            "Accept": "application/vnd.github.golden-comet-preview+json"
-        }
-        commit= {        
-        }
-        payload = json.dumps(commit)
-        r = requests.request("POST", url, data=payload, headers=headers)
-        res_dict=r.json()
-        self.review_id=res_dict['id']
-
-        url = 'https://api.github.com/repos/%s/%s/pulls/%d/reviews/%d/events' % (self.owner, self.repo,self.pull_number,self.review_id)
-        headers = {
-            "Authorization": "token %s" % TOKEN,
-            "Accept": "application/vnd.github.golden-comet-preview+json"
-        }
-        commit= {
-                'event':'APPROVE'      
-        }
-        payload = json.dumps(commit)
-        r = requests.request("POST", url, data=payload, headers=headers)
-        return r.content
     
 
 class ClosePullRequestEntity:
@@ -63,23 +38,9 @@ class ClosePullRequestEntity:
         self.pr_number = pr_number
         self.title = title
         self.body = body
-    def execute(self):
-        url = 'https://api.github.com/repos/%s/%s/pulls/%d' % (self.owner, self.name,pul_number)
-        headers = {
-            "Authorization": "token %s" % TOKEN,
-            "Accept": "application/vnd.github.golden-comet-preview+json"
-        }  
-        data = {
-                'title':self.title,
-                'body' :self.body,
-                'state':'closed',
-                }
-        payload = json.dumps(data)
-        r = requests.request("POST", url, data=payload, headers=headers)
-        return r.content
+
     
 class CreateWebhookEntity:
-    def __init__(self, owner, repo, url):
+    def __init__(self, owner, repo):
         self.owner = owner
         self.repo = repo
-        self.url= url
