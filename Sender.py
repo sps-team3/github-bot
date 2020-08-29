@@ -110,7 +110,7 @@ def create_repo_webhook(webhook_entity):
         'content_type': 'json',
         'insecure_ssl': '0',
             },
-        'event':('*')
+        'events':['*']
         }
     # Add the issue to our repository
     payload = json.dumps(data)
