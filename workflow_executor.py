@@ -32,12 +32,17 @@ def execute_issue_comment(json):
     repo = json['repository']
     issue = json['issue']
     comment = json['comment']
-
-    title = 'GitHub: Issue Commented'
+    if 'pull_request' in issue.keys():
+        title = 'GitHub: Pull Request Commented'
+        tp = 'Pull Request'
+    else:
+        title = 'GitHub: Issue Commented'
+        tp = 'Issue'
     text = ''
     text += '[[%s]](%s)\n\n' % (repo['name'], repo['html_url'])
-    text += '[Issue](%s) has a new [comment](%s) by [%s](%s) \n\n' % \
-        (issue['html_url'], comment['html_url'],
+    text += '[%s](%s) has a new [comment](%s) by [%s](%s) \n\n' % \
+        (tp,
+         issue['html_url'], comment['html_url'],
          issue['user']['login'], issue['user']['html_url'])
     text += '%s\n\n' % (comment['body'])
 
@@ -89,6 +94,24 @@ def execute_pull_request_close(json):
             print(im_request)
             send_dingding_msg(im_request)
 
+def execute_pr_review_comment(json):
+    repo = json['repository']
+    pull_request = json['pull_request']
+    comment = json['comment']
+    user = comment['user']
+
+    title = 'GitHub: Pull Request Review Commented'
+    text = ''
+    text += '[[%s]](%s)\n\n' % (repo['name'], repo['html_url'])
+    text += '[Pull Request](%s) has a new review comment by [%s](%s)\n\n' % \
+            (pull_request['html_url'], user['login'], user['html_url'])
+    text += '%s\n\n' % (comment['body'])
+
+    for config in configs:
+        im_request = IMSenderEntity(config['token'], title, text,
+                config['remiders'], config['is_at_all'])
+        print(im_request)
+        send_dingding_msg(im_request)
 
 def execute_approve_issue(body):
     # straightforward call sender?

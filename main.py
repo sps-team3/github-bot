@@ -1,12 +1,12 @@
 import datetime
 from flask import Flask, render_template, request, redirect
 from workflow_executor import execute_issue_open, execute_issue_comment, execute_pull_request_open
-from workflow_executor import execute_pull_request_close
+from workflow_executor import execute_pull_request_close, execute_pr_review_comment, execute_pr_approve
 
 app = Flask(__name__)
 
 DINGTALK_PREFIX = 'https://oapi.dingtalk.com/robot/send?access_token='
-ACCESS_TOKEN = ''
+ACCESS_TOKEN = 'ef4bc3afd938ca0bc616c7e8fd4978ae978365d7832028c13e4e565a20f95bdf'
 
 @app.route('/', methods=['GET', 'POST'])
 def root():
@@ -37,6 +37,12 @@ def receiver():
         'pull_request': {
             'opened': execute_pull_request_open,
             'closed': execute_pull_request_close
+            },
+        'pull_request_review_comment': {
+            'created': execute_pr_review_comment
+            },
+        'pull_request_review': {
+            'submitted': execute_pr_approve
             },
         }
     event_map[event][action](request.json)
