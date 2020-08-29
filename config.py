@@ -1,13 +1,15 @@
+import json
 from google.cloud import datastore
 
 
 class Config:
-    def __init__(self, bot_web_hook: str, repo: str, owner: str, is_at_all: bool, reminders: list):
+    def __init__(self, bot_web_hook: str, repo: str, owner: str, is_at_all: bool, reminders: list, data: dict):
         self.bot_web_hook = bot_web_hook
         self.repo = repo
         self.owner = owner
         self.is_at_all = is_at_all
         self.reminders = reminders
+        self.data = data
 
     def get_web_hook(self) -> str:
         return self.bot_web_hook
@@ -24,6 +26,9 @@ class Config:
     def get_owner(self) -> str:
         return self.owner
 
+    def get_data(self) -> dict:
+        return self.data
+
     def __str__(self):
         config_str = "config:\n"
         config_str += "\tWebhook = " + self.bot_web_hook + "\n"
@@ -34,6 +39,7 @@ class Config:
         for item in self.reminders:
             config_str += item + ", "
         config_str += "]\n"
+        config_str += "\tdata = " + str(self.data) + "\n"
         return config_str
 
 
@@ -51,7 +57,8 @@ class ConfigDataBase:
             bot_web_hook = entity['bot_web_hook']
             is_at_all = entity['is_at_all']
             reminders = entity['reminders']
-            configs.append(Config(bot_web_hook, repo, owner, is_at_all, reminders))
+            data = json.loads(entity['data'])
+            configs.append(Config(bot_web_hook, repo, owner, is_at_all, reminders, data))
         return configs
 
     def add_config(self, config: Config):
@@ -62,7 +69,8 @@ class ConfigDataBase:
             'repo': config.repo,
             'owner': config.owner,
             'is_at_all': config.is_at_all,
-            'reminders': config.reminders
+            'reminders': config.reminders,
+            'data' : json.dumps(config.data)
         })
         self.datastore_client.put(entity)
 
@@ -90,9 +98,10 @@ class ConfigDataBase:
 
 if __name__ == "__main__":
     config_store = ConfigDataBase()
-    config = Config("http://www.test3.com", "tt", "tt", True, ["Alice", "Bob"])
+    config = Config("http://www.test3.com", "tt", "tt", True, ["Alice"], {"group id": "qwertyu", "user id": "poiuy"})
     print(config)
     config_store.add_config(config)
     configs = config_store.get_configs("tt", "tt")
+    print("get configs:\n")
     for c in configs:
         print(c)
