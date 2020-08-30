@@ -5,8 +5,7 @@ TOKEN = '1b2331601eb0ed9010156a480751131f19234ce0'
 
 def make_issue_comment(request_entity):
 
-    url = 'https://api.github.com/repos/%s/%s/issues/%d/comments' % \
-        (request_entity.owner, request_entity.repo, request_entity.issue_number)
+    url = 'https://api.github.com/repos/%s/%s/issues/%d/comments' % (request_entity.owner, request_entity.repo, request_entity.issue_number)
 
     # Headers
     headers = {
