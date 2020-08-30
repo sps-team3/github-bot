@@ -5,7 +5,7 @@ curl 'localhost:8080/webhook/im' \
 -d '{
     "msgtype": "text", 
     "text": {
-        "content": "TEST"
+        "content": "config hzw649 my-portfolio 59b744fe68279fa715636ab5b9d351aa32bafe7cce761b4606e4fe5145977903"
     }, 
     "msgId": "XXXX", 
     "createAt": 1487561654123,

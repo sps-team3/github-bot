@@ -145,21 +145,24 @@ def execute_approve_pull_request(body, group_id):
 
 
 def execute_receive_configuration(body, group_id):
-    owner = body[1]
+    owner = body[1] 
     repo = body[2]
     token = body[3]
-    is_at_all = body[4].lower() == 'true'
-    reminders = body[5].split(' ')
+    is_at_all = 'false' if len(body)<=4 else body[4].lower() == 'true'
+    reminders = [] if len(body)<=5 else body[5].split(' ')
     data = {
         'group id': group_id
     }
 
     webhook = CreateWebhookEntity(owner, repo)
     response = create_repo_webhook(webhook)
-
+    
+    print(owner)
+    print(repo)
+    print(response)
     # if create webhook successfully, save config
     config = Config(token, repo, owner, is_at_all, reminders, data)
-    config_store.add_config(config)
+#    config_store.add_config(config)
 
 
 def execute_reply_message(webhook):

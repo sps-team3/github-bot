@@ -1,7 +1,7 @@
 import json
 import requests
 
-TOKEN = 'ef4bc3afd938ca0bc616c7e8fd4978ae978365d7832028c13e4e565a20f95bdf'
+TOKEN = '1b2331601eb0ed9010156a480751131f19234ce0'
 
 def make_issue_comment(request_entity):
 
@@ -115,17 +115,17 @@ def create_repo_webhook(webhook_entity):
         'Authorization': 'token %s' % TOKEN,
         'Accept': 'application/vnd.github.golden-comet-preview+json'
     }
-
+    print(url)
     # Create our issue
     data={
-        'config': {
-        'url': webhook_url,
-        #'secret': secret,
-        'content_type': 'json',
-        'insecure_ssl': '0',
-            },
-        'events':['*']
-        }
+            'config': {
+                'url': webhook_url,
+                'secret': 'secret',
+                'content_type': 'json',
+                'insecure_ssl': '0',
+                },
+            'events':['*']
+            }
     # Add the issue to our repository
     payload = json.dumps(data)
 
