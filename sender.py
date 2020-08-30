@@ -108,7 +108,7 @@ def reply_dingding_msg(reply):
 def create_repo_webhook(webhook_entity):
 
     url = 'https://api.github.com/repos/%s/%s/hooks' % (webhook_entity.owner, webhook_entity.repo)
-    webhook_url = 'summer20-sps-52.appspot.com/webhook/bot' 
+    webhook_url = 'http://yandongl.com/webhook/bot' 
 
     # Headers
     headers = {

@@ -144,19 +144,23 @@ def execute_approve_pull_request(body, group_id):
     return 'No config exist'
 
 
-def execute_receive_configuration(body):
+def execute_receive_configuration(body, group_id):
     owner = body[1]
     repo = body[2]
     token = body[3]
-    is_at_all = body[4]
-    reminders = body[5]
+    is_at_all = body[4].lower() == 'true'
+    reminders = body[5].split(' ')
+    data = {
+        'group id': group_id
+    }
 
     webhook = CreateWebhookEntity(owner, repo)
     response = create_repo_webhook(webhook)
 
     # if create webhook successfully, save config
-    config = Config(token, repo, owner, is_at_all, reminders)
+    config = Config(token, repo, owner, is_at_all, reminders, data)
     config_store.add_config(config)
+
 
 def execute_reply_message(webhook):
     content = 'TEST reply'
