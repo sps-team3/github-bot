@@ -1,7 +1,7 @@
 import json
 import requests
 
-TOKEN = ''
+TOKEN = 'ef4bc3afd938ca0bc616c7e8fd4978ae978365d7832028c13e4e565a20f95bdf'
 
 def make_issue_comment(request_entity):
 
@@ -88,6 +88,21 @@ def send_dingding_msg(im_request):
         }
     }
     r = requests.post(url, data=json.dumps(data), headers=headers)
+    return r.text
+
+def reply_dingding_msg(reply):
+    headers = {'Content-Type': 'application/json;charset=utf-8'}
+    data = {
+        'msgtype': 'text',
+        'text': {
+            'content': reply.content
+        },
+        'at': {
+            'atMobiles': [],
+            'isAtAll': False
+        }
+    }
+    r = requests.post(reply.url, data=json.dumps(data), headers=headers)
     return r.text
 
 def create_repo_webhook(webhook_entity):

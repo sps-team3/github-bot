@@ -1,12 +1,10 @@
 import datetime
 from flask import Flask, render_template, request, redirect
 from workflow_executor import execute_issue_open, execute_issue_comment, execute_pull_request_open
-from workflow_executor import execute_pull_request_close, execute_pr_review_comment
+from workflow_executor import execute_pull_request_close, execute_pr_review_comment, execute_approve_pull_request
+from workflow_executor import execute_receive_configuration, execute_reply_message
 
 app = Flask(__name__)
-
-DINGTALK_PREFIX = 'https://oapi.dingtalk.com/robot/send?access_token='
-ACCESS_TOKEN = 'ef4bc3afd938ca0bc616c7e8fd4978ae978365d7832028c13e4e565a20f95bdf'
 
 @app.route('/', methods=['GET', 'POST'])
 def root():
@@ -53,31 +51,29 @@ def im_receiver():
     data = request.json
     content = data['text']['content']
     group_id = data['conversationId']
+    webhook = data['sessionWebhook']
+
+    content = content.strip()
 
     print(content)
     print(group_id)
 
-    # word = content.split(' ')
-    # request_type = word[1]
-    
-    # if request_type == 'approve_pr':
-    #     execute_approve_pull_request(word)
+    words = content.split('\\')
+    for i in range(len(words)):
+        words[i] = words[i].strip()
 
+    request_type = words[0]
+    
+    if request_type == 'approve_pr':
+        execute_approve_pull_request(words, group_id)
+    elif request_type == 'config':
+        execute_receive_configuration(words)
+    
+    execute_reply_message(webhook)
 
     response_content = 'Receive content: ' + content
-
-    data = {
-        'msgtype': 'markdown',
-        'text': {
-            'content': response_content
-        },
-        'at': {
-            'atMobiles': [],
-            'isAtAll': False
-        }
-    }
     
-    return data
+    return ''
 
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App

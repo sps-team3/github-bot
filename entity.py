@@ -14,6 +14,10 @@ class IMSenderEntity:
         text += 'text: %s \n' % (self.text)
         return text
 
+class IMReplyEntity:
+    def __init__(self, url, content):
+        self.url = url
+        self.content = content
 
 class CommentIssueEntity:
     def __init__(self, owner, repo, issue_number, body):

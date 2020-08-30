@@ -1,5 +1,5 @@
 from entity import IMSenderEntity, ApprovePullRequestEntity, CreateWebhookEntity
-from sender import send_dingding_msg, approve_pull_request, create_repo_webhook
+from sender import send_dingding_msg, approve_pull_request, create_repo_webhook, reply_dingding_msg
 from config import ConfigDataBase, Config
 
 config_store = ConfigDataBase()
@@ -130,12 +130,11 @@ def check_config_exist(repo, owner, group_id):
     return False
 
 
-def execute_approve_pull_request(body):
-    repo = body['repo']
-    owner = body['owner']
-    pr_number = body['pr_number']
-    content = body['content']
-    group_id = body['group_id']
+def execute_approve_pull_request(body, group_id):
+    owner = body[1]
+    repo = body[2]
+    pr_number = body[3]
+    content = body[4]
 
     if check_config_exist(repo, owner. group_id):
         data = {}
@@ -145,12 +144,12 @@ def execute_approve_pull_request(body):
     return 'No config exist'
 
 
-def execute_receive_configuration(configuration):
-    token = configuration['token']
-    repo = configuration['repo']
-    owner = configuration['owner']
-    is_at_all = configuration['at_all']
-    reminders = configuration['reminders']
+def execute_receive_configuration(body):
+    owner = body[1]
+    repo = body[2]
+    token = body[3]
+    is_at_all = body[4]
+    reminders = body[5]
 
     webhook = CreateWebhookEntity(owner, repo)
     response = create_repo_webhook(webhook)
@@ -158,3 +157,7 @@ def execute_receive_configuration(configuration):
     # if create webhook successfully, save config
     config = Config(token, repo, owner, is_at_all, reminders)
     config_store.add_config(config)
+
+def execute_reply_message(webhook):
+    content = 'TEST reply'
+    reply_dingding_msg(webhook, content)
